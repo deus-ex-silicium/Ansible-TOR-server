@@ -1,0 +1,9 @@
+---
+user: admin
+group: admin
+home_path: /home/{{user}}
+
+# limit rule starts denying connections from an addres that
+# initiates more then 6 connections in 30 seconds 
+ufw_whitelist:
+  - { port: 22, protocol: tcp }

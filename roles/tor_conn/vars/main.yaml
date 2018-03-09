@@ -1,0 +1,4 @@
+---
+user: admin
+group: admin
+home_path: /home/{{user}}

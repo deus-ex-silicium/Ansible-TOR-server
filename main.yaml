@@ -1,0 +1,7 @@
+---
+- hosts: all
+  roles:
+    - setup_ufw
+    - tor_apache
+    - tor_conn
+
