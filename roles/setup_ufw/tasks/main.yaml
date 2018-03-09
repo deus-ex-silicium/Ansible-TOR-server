@@ -1,0 +1,20 @@
+- name: Installing Uncomplicated FireWall (ufw)
+  apt: name=ufw state=installed update_cache=true
+- name: Allow whitelisted connections with rate limiting
+  ufw:
+    rule: limit
+    port: "{{ item.port }}"
+    proto: "{{ item.protocol }}"
+  with_items: "{{ ufw_whitelist }}"
+  # no when since at least ssh should always be defined
+- name: Deny all incoming traffic by default
+  ufw:
+    default: deny
+    direction: incoming
+- name: Allow all outgoing traffic by default
+  ufw:
+    default: allow
+    direction: outgoing
+- name: Enable firewall
+  ufw:
+    state: enabled

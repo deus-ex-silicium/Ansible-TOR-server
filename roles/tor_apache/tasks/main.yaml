@@ -1,0 +1,91 @@
+###############################################################
+- name: Set up kernel parameters
+  sysctl:
+    name: "{{ item.key }}"
+    value: "{{ item.value }}"
+    state: present
+    reload: true
+  with_dict: "{{ sysctl_rules }}"
+  when: sysctl_rules is defined
+  tags: [sysctl]
+###############################################################
+- name: Update all packages to latest version
+  apt:
+    update_cache: yes
+- name: Installing apache2 and php
+  apt:
+    name: "{{ item }}"
+    state: installed 
+  with_items:
+  - apache2
+  - php5
+  - libapache2-mod-php5
+  - php5-gd
+  - php5-mcrypt
+###############################################################
+- name: Configure /etc/apache2/conf-enabled/security.conf
+  lineinfile:
+    path: /etc/apache2/conf-enabled/security.conf
+    state: present
+    regexp: "{{ item.regexp }}" 
+    line: "{{ item.line }}"
+  with_items:
+    - { regexp: '^ServerTokens .*$', line: 'ServerTokens Prod' }
+    - { regexp: '^ServerSignature .*$', line: 'ServerSignature Off' }
+    - { regexp: '^FileETag .*$', line: 'FileETag None' }
+###############################################################
+- name: Configure /etc/apache2/apache2.conf
+  lineinfile:
+    path: /etc/apache2/apache2.conf
+    state: present
+    regexp: "{{ item.regexp }}"
+    line: "{{ item.line }}"
+  with_items:
+    - { regexp: '^(?!#).*Options(.*)Indexes(.*)FollowSymLinks',
+        line: 'Options -Indexes -FollowSymLinks' }
+###############################################################
+- name: Copy server contents
+  copy: 
+    src: onion_service
+    dest: /var/www
+- name: Creating configuration for onion_service
+  copy: 
+    src: /etc/apache2/sites-available/000-default.conf
+    dest: /etc/apache2/sites-available/001-onion.conf
+    remote_src: yes
+- name: Configuring onion_service
+  lineinfile:
+    path: /etc/apache2/sites-available/001-onion.conf
+    state: present
+    regexp: "{{ item.regexp }}"
+    line: "{{ item.line }}"
+  with_items:
+    - { regexp: 'DocumentRoot .*$',
+        line: 'DocumentRoot /var/www/onion_service/' }
+    - { regexp: 'ErrorLog .*$',
+        line: 'ErrorLog ${APACHE_LOG_DIR}/tor/error.log'}
+    - { regexp: 'CustomLog .*$',
+        line: 'CustomLog ${APACHE_LOG_DIR}/tor/access.log combined'}
+- name: Creating apache logging directory
+  file: 
+    path: /var/log/apache2/tor/
+    state: directory
+- name: Disable old site configuration
+  command: a2dissite 000-default
+- name: Enable new site configuration
+  command: a2ensite 001-onion.conf
+- name: Disable status apache module
+  apache2_module:
+    state: absent
+    name: mod_status
+###############################################################
+- name: Configure ip and port
+  lineinfile:
+    path: /etc/apache2/ports.conf
+    regexp: "{{ item.regexp }}"
+    line: "{{ item.line }}"
+  with_items:
+    - { regexp: '^Listen .*$', line: 'Listen 127.0.0.1:80'} 
+# TODO: what about ssl module ?
+- name: Restart apache service
+  service: name=apache2 state=restarted

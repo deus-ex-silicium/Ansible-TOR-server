@@ -1,0 +1,29 @@
+###############################################################
+- name: Update all packages to latest version
+  apt:
+    update_cache: yes
+- name: Installing tor
+  apt:
+    name: "{{ item }}"
+    state: installed 
+  with_items:
+  - tor
+###############################################################
+- name: Configure /etc/tor/torrc
+  lineinfile:
+    path: /etc/tor/torrc
+    state: present
+    regexp: "{{ item.regexp }}" 
+    line: "{{ item.line }}"
+  with_items:
+    - { regexp: '^HiddenServiceDir .*$',
+        line: 'HiddenServiceDir /var/lib/tor/onion_service' }
+    - { regexp: '^HiddenServicePort .*$',
+      line: 'HiddenServicePort 80 127.0.0.1:80' }
+###############################################################
+- name: Restart tor service
+  service: name=tor state=restarted
+
+# HOSTNAME in /var/lib/tor/onion_service/hostname
+# REF:
+# https://niebezpiecznik.pl/post/jak-uruchomic-wlasny-serwer-www-w-sieci-tor/
