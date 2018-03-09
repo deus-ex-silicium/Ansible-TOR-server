@@ -14,8 +14,4 @@
 - key needs proper perms ```chmod 0400 key.pem```
 - (b)ecome using sudo by default for all tasks
 ---
-### Troubleshooting
-Sometimes playbooks keep getting stuck on some task, to resolve clear cp ansible directory and restart playbook
-```rm -rf ~/.ansible/cp```
----
 [Based on tutorial from niebezpiecznik.pl](https://niebezpiecznik.pl/post/jak-uruchomic-wlasny-serwer-www-w-sieci-tor/)
