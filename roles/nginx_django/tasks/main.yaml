@@ -1,0 +1,72 @@
+- name: Upgrade system
+  apt: upgrade=dist update_cache=yes    # sudo apt-get update && sudo apt-get upgrade
+
+- name: Install list of packages
+  action: apt pkg={{item}} state=installed
+  with_items:
+    - python3-pip
+    - python-pip
+    - python3-dev
+    - libpq-dev
+    - nginx
+    - gunicorn
+    - supervisor
+    - python-virtualenv
+    - libmagickwand-dev
+
+- name: Upload django_app files
+  copy: src='../django_app/' dest='/django_app/'
+
+- name: Upload nginx.conf settings
+  template: 
+    src: templates/nginx/nginx.conf.j2
+    dest: /etc/nginx/nginx.conf
+
+- name: Upload nginx django_app settings
+  template: 
+    src: templates/nginx/django_app.j2
+    dest: /etc/nginx/sites-enabled/django_app
+
+- name: Remove default nginx conf
+  file: 
+    name: /etc/nginx/sites-enabled/default
+    state: absent
+
+- name: Check virtualenv exist
+  stat:
+    path: /web_apps/swiss_website/venv
+  register: venv_dir
+    
+- name: Manually create the initial virtualenv
+  command: virtualenv /django_app/venv -p python3.5
+  when: venv_dir.stat.isdir is defined and venv_dir.isdir
+
+- name: Install Python3 requirements
+  pip: 
+    requirements: /django_app/requirements.txt
+    virtualenv: /django_app/venv/
+    virtualenv_python: python3.5
+
+- name: Makes migrations
+  sudo: yes
+  command: bash -c "source /django_app/venv/bin/activate && python3 /django_app/manage.py makemigrations --no-input"
+
+- name: Migrate
+  sudo: yes
+  command: bash -c "source /django_app/venv/bin/activate && python3 /django_app/manage.py migrate --no-input"
+
+- name: Collectstatic
+  sudo: yes
+  command: bash -c "source /django_app/venv/bin/activate && python3 /django_app/manage.py collectstatic --no-input"
+
+- name: Upload supervisor configuration
+  template:
+    src: templates/supervisor/django_app.conf.j2
+    dest: /etc/supervisor/conf.d/django_app.conf
+
+- name: Reload supervisor
+  sudo: yes
+  command: supervisorctl reload
+
+- name: Reload nginx
+  action: service name=nginx state=reloaded
