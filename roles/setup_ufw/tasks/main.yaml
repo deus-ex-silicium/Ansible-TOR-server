@@ -18,3 +18,13 @@
 - name: Enable firewall
   ufw:
     state: enabled
+###############################################################
+- name: Set up kernel parameters
+  sysctl:
+    name: "{{ item.key }}"
+    value: "{{ item.value }}"
+    state: present
+    reload: true
+  with_dict: "{{ sysctl_rules }}"
+  when: sysctl_rules is defined
+  tags: [sysctl]
