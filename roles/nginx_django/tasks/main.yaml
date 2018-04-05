@@ -1,7 +1,7 @@
 - name: Upgrade system
   apt: upgrade=dist update_cache=yes    # sudo apt-get update && sudo apt-get upgrade
 
-- name: Install list of packages
+- name: Install required OS packages
   action: apt pkg={{item}} state=installed
   with_items:
     - python3-pip
@@ -15,7 +15,7 @@
     - libmagickwand-dev
 
 - name: Upload django_app files
-  copy: src='../django_app/' dest='/django_app/'
+  copy: src='django_app/' dest='/django_app/'
 
 - name: Upload nginx.conf settings
   template: 
