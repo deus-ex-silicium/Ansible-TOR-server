@@ -2,6 +2,6 @@
 - hosts: all
   roles:
     - setup_ufw
-    - tor_apache
+    - nginx_django
     - tor_conn
 
