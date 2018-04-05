@@ -5,3 +5,4 @@
 *.pyc
 db.sqlite3
 venv
+ubuntu-aws-key.pem
