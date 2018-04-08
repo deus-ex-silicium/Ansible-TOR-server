@@ -1,10 +1,14 @@
 # Ansible playbook / roles for setting up a TOR server
  - **setup_ufw** role installs and configures Uncomplicated Firewall
- - **tor_apache** role installs and configures Apache server instance
+ - **nginx_django** role installs and configures Nginx server instance and Django "Hello World" application
  - **tor_conn** role installs tor and connects Apache server to Tor network
+ - **tor_apache** role installs and configures Apache server instance
  - check **vars.yaml** to customize role configuration
  - after running playbook server hostname is in **/var/lib/tor/onion_service/hostname**
 ---
+### Requirements
+ - Ansible >= 2.5.0
+ - Python > 2.6 on controlled machine
 ### Useful commands
 ```ansible all -m ping -u <user> -i <vps-ip>,```
 - pings vps server without the need to set up inventory

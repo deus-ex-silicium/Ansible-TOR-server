@@ -1,14 +1,4 @@
 ###############################################################
-- name: Set up kernel parameters
-  sysctl:
-    name: "{{ item.key }}"
-    value: "{{ item.value }}"
-    state: present
-    reload: true
-  with_dict: "{{ sysctl_rules }}"
-  when: sysctl_rules is defined
-  tags: [sysctl]
-###############################################################
 - name: Update all packages to latest version
   apt:
     update_cache: yes

@@ -1,0 +1,19 @@
+
+server {
+    listen 80 default_server;
+    listen [::]:80 default_server;
+    client_max_body_size 20M;
+
+    server_name _;
+
+    location = /favicon.ico { access_log off; log_not_found off; }
+
+    location /static/ {
+        root /django_app/;
+    }
+
+    location / {
+        include proxy_params;
+        proxy_pass http://unix:/django_app/django_app.sock;
+    }
+}
