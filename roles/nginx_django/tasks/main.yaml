@@ -2,7 +2,7 @@
   apt: upgrade=dist update_cache=yes    # sudo apt-get update && sudo apt-get upgrade
 
 - name: Install required OS packages
-  action: apt pkg={{item}} state=installed
+  action: apt pkg={{item}} state=present
   with_items:
     - python3-pip
     - python-pip

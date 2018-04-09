@@ -1,5 +1,5 @@
 - name: Installing Uncomplicated FireWall (ufw)
-  apt: name=ufw state=installed update_cache=true
+  apt: name=ufw state=present update_cache=true
 - name: Allow whitelisted connections with rate limiting
   ufw:
     rule: limit

@@ -5,7 +5,7 @@
 - name: Installing tor
   apt:
     name: "{{ item }}"
-    state: installed 
+    state: present
   with_items:
   - tor
 ###############################################################
