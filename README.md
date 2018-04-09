@@ -2,7 +2,7 @@
  - **setup_networking** role installs and configures Uncomplicated Firewall, along with other networking stuff
  - **nginx_django** role installs and configures Nginx server instance and Django "Hello World" application
  - **apache_php** role installs and configures Apache server instance and PHP "Hello World" application
- - **tor_conn** role installs tor and connects Apache server to Tor network
+ - **tor_conn** role installs tor and connects server to Tor network
  - check **vars.yaml** to customize role configuration
  - after running playbook server hostname is in **/var/lib/tor/onion_service/hostname**
 ---
