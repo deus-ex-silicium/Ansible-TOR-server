@@ -8,7 +8,7 @@
 ---
 ### Requirements
  - Ansible >= 2.5.0
- - Python > 2.6 on controlled machine
+ - Python3 on controlled machine
 ### Useful commands
 ```ansible all -m ping -u <user> -i <vps-ip>,```
 - pings vps server without the need to set up inventory
