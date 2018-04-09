@@ -3,8 +3,8 @@
 *.swm
 *.swn
 *.pyc
+*.pem
 db.sqlite3
 venv
-ubuntu-aws-key.pem
 hosts
 main.retry

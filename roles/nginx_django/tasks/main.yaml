@@ -38,14 +38,14 @@
   register: venv_dir
     
 - name: Manually create the initial virtualenv
-  command: virtualenv /django_app/venv -p python3.5
+  command: virtualenv /django_app/venv -p python3
   when: venv_dir.stat.isdir is defined and venv_dir.isdir
 
 - name: Install Python3 requirements
   pip: 
     requirements: /django_app/requirements.txt
     virtualenv: /django_app/venv/
-    virtualenv_python: python3.5
+    virtualenv_python: python3
 
 - name: Makes migrations
   sudo: yes
